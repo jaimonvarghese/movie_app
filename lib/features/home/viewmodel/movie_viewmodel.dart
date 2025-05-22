@@ -5,14 +5,23 @@ import 'package:movie_app/features/home/services/movie_service.dart';
 class MovieViewmodel extends ChangeNotifier {
   final MovieService _service = MovieService();
 
-  List<MovieModel> _movies = [];
+  List<MovieModel> _popularMovies = [];
+  List<MovieModel> get popularMovies => _popularMovies;
+
+  List<MovieModel> _upcomingMovies = [];
+  List<MovieModel> get upcomingMovies => _upcomingMovies;
+
+  List<MovieModel> _topRatedMovies = [];
+  List<MovieModel> get topRatedMovies => _topRatedMovies;
 
   bool _isLoading = false;
-  String _error = '';
-
-  List<MovieModel> get movies => _movies;
   bool get isLoading => _isLoading;
+
+  String _error = '';
   String get error => _error;
+
+  bool _isInitialized = false;
+
 
   void _setLoading(bool loading) {
     _isLoading = loading;
@@ -24,14 +33,16 @@ class MovieViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //fetch popular movies list
-
-  Future<void> fetchPopularMovies() async {
+  Future<void> fetchMovies() async {
+     if (_isInitialized) return;
     _setLoading(true);
-    _error = '';
+    _error = "";
 
     try {
-      _movies = await _service.getPopularMovies();
+      _popularMovies = await _service.getPopularMovies();
+      _upcomingMovies = await _service.getUpComingMovies();
+      _topRatedMovies = await _service.getTopRatedMovies();
+      _isInitialized = true;
       notifyListeners();
     } catch (e) {
       _setError(e.toString());

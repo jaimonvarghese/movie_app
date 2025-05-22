@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/features/Auth/view/screens/sigin_screen.dart';
+import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class UserProfileScreen extends StatelessWidget {
   const UserProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _signOut() async {
+      try {
+        await Provider.of<AuthViewModel>(context, listen: false).signOut();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => SignInScreen()),
+        );
+      } catch (e) {
+        throw Exception('Error:${e.toString()}');
+      }
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFF121212), // Match dark background
       appBar: AppBar(
@@ -29,7 +45,9 @@ class UserProfileScreen extends StatelessWidget {
             // Avatar
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('assets/images/avatar.png'), // Replace with your image
+              backgroundImage: AssetImage(
+                'assets/images/avatar.png',
+              ), // Replace with your image
             ),
             const SizedBox(height: 16),
 
@@ -37,9 +55,10 @@ class UserProfileScreen extends StatelessWidget {
             Text(
               'Jaimon Varghese',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 4),
 
@@ -54,9 +73,7 @@ class UserProfileScreen extends StatelessWidget {
             buildInfoTile(Icons.movie, 'My Watchlist'),
             buildInfoTile(Icons.download, 'Downloads'),
             buildInfoTile(Icons.settings, 'Settings'),
-            buildInfoTile(Icons.logout, 'Log Out', onTap: () {
-              // Sign out logic here
-            }),
+            buildInfoTile(Icons.logout, 'Log Out', onTap: _signOut),
           ],
         ),
       ),
@@ -72,7 +89,11 @@ class UserProfileScreen extends StatelessWidget {
         child: ListTile(
           leading: Icon(icon, color: Colors.white),
           title: Text(title, style: TextStyle(color: Colors.white)),
-          trailing: Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+          trailing: Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.white54,
+            size: 16,
+          ),
         ),
       ),
     );

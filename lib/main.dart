@@ -1,10 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
 import 'package:movie_app/features/home/view/screens/splash_screen.dart';
 import 'package:movie_app/features/home/viewmodel/movie_viewmodel.dart';
+import 'package:movie_app/features/search/viewmodel/search_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -14,7 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => MovieViewmodel())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => MovieViewmodel()),
+        ChangeNotifierProvider(create: (_) => SearchViewmodel()),
+        ChangeNotifierProvider(create: (_) => AuthViewModel()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Movie App',

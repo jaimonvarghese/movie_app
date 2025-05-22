@@ -1,34 +1,54 @@
-import 'dart:convert';
+import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:movie_app/core/api_constants.dart';
 import 'package:movie_app/features/home/models/movie_model.dart';
-import 'package:http/http.dart' as http;
 
 class MovieService {
-  final String baseUrl = ApiConstants.baseUrl;
+  final Dio _dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
 
   Future<List<MovieModel>> getPopularMovies() async {
-    final url = Uri.parse(
-      '$baseUrl/movie/${ApiConstants.popular}?api_key=${ApiConstants.apiKey}',
-    );
-
     try {
-      final response = await http.get(url);
+      final response = await _dio.get(
+        '/movie/${ApiConstants.popularMoviesEndpoint}',
+        queryParameters: {'api_key': ApiConstants.apiKey},
+      );
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-
-        // Extract the 'results' list
-        final List<dynamic> results = data['results'];
-
-        return results.map((json) => MovieModel.fromJson(json)).toList();
-      } else {
-        throw Exception(
-          'Failed to load movies. Status code: ${response.statusCode}',
-        );
-      }
+      final List<dynamic> results = response.data['results'];
+      return results.map((json) => MovieModel.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('Error fetching movies: $e');
+      log("Dio error: $e");
+      throw Exception("Error fetching popular movies: $e");
+    }
+  }
+
+  Future<List<MovieModel>> getUpComingMovies() async {
+    try {
+      final response = await _dio.get(
+        '/movie/${ApiConstants.upComingEndPoint}',
+        queryParameters: {'api_key': ApiConstants.apiKey},
+      );
+
+      final List<dynamic> results = response.data['results'];
+      return results.map((json) => MovieModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Dio error: $e");
+      throw Exception("Error fetching Upcoming movies: $e");
+    }
+  }
+
+  Future<List<MovieModel>> getTopRatedMovies() async {
+    try {
+      final response = await _dio.get(
+        '/movie/${ApiConstants.topRatedEndpoint}',
+        queryParameters: {'api_key': ApiConstants.apiKey},
+      );
+
+      final List<dynamic> results = response.data['results'];
+      return results.map((json) => MovieModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Dio error: $e");
+      throw Exception("Error fetching Top Rated  movies: $e");
     }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_app/common/widgets/error_box_container.dart';
+import 'package:movie_app/common/widgets/movie_card_widget.dart';
 import 'package:movie_app/features/home/view/widgets/movie_main_card.dart';
 import 'package:movie_app/features/home/view/widgets/movie_title_card_widget.dart';
 import 'package:movie_app/features/home/view/widgets/quick_action_section_widget.dart';
@@ -13,15 +15,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () =>
-          Provider.of<MovieViewmodel>(
-            context,
-            listen: false,
-          ).fetchPopularMovies(),
-    );
+    Provider.of<MovieViewmodel>(context, listen: false).fetchMovies();
   }
 
   @override
@@ -29,73 +26,86 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Consumer<MovieViewmodel>(
-            builder: (context, movieViewmodel, _) {
-              // Loading state
-              if (movieViewmodel.isLoading && movieViewmodel.movies.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF50C4ED)),
-                );
-              }
+        child: Consumer<MovieViewmodel>(
+          builder: (context, movieViewmodel, _) {
+            if (movieViewmodel.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(color: Colors.redAccent),
+              );
+            }
 
-              // Error state
-              if (movieViewmodel.error.isNotEmpty &&
-                  movieViewmodel.movies.isEmpty) {
-                return _buildErrorView(movieViewmodel);
-              }
-
-              // Main content
-              return RefreshIndicator(
-                onRefresh: () => movieViewmodel.fetchPopularMovies(),
-                child: ListView(
-                  children: [
-                    const QuickActionSectionWidget(),
-                    const SizedBox(height: 16),
-                    const MovieMainCard(),
-                    const SizedBox(height: 16),
-                    MovieTitleCardWidget(
-                      title: 'Popular Movies',
-                      movieViewmodel: movieViewmodel,
-                    ),
-                  ],
+            if (movieViewmodel.error.isNotEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ErrorBoxContainer(
+                  onPressed: () {
+                    movieViewmodel.fetchMovies();
+                  },
+                  error: movieViewmodel.error,
                 ),
               );
-            },
-          ),
+            }
+
+            if (movieViewmodel.popularMovies.isEmpty ||
+                movieViewmodel.upcomingMovies.isEmpty ||
+                movieViewmodel.topRatedMovies.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No Data Found',
+                  style: TextStyle(color: Colors.white),
+                ),
+              );
+            }
+
+            return ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: [
+                const QuickActionSectionWidget(),
+                const SizedBox(height: 24),
+            
+                // Hero Card
+                MovieMainCard(movieViewmodel: movieViewmodel),
+                const SizedBox(height: 24),
+            
+                // Popular Movies
+                const MovieTitleCardWidget(title: ' Popular Movies'),
+                const SizedBox(height: 12),
+                buildHorizontalMovieList(movieViewmodel.popularMovies),
+            
+                const SizedBox(height: 28),
+            
+                // Upcoming Movies
+                const MovieTitleCardWidget(title: ' Upcoming Movies'),
+                const SizedBox(height: 12),
+                buildHorizontalMovieList(movieViewmodel.upcomingMovies),
+            
+                const SizedBox(height: 28),
+            
+                // Top Rated Movies
+                const MovieTitleCardWidget(title: ' TopRated '),
+                const SizedBox(height: 12),
+                buildHorizontalMovieList(movieViewmodel.topRatedMovies),
+            
+                const SizedBox(height: 40),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildErrorView(MovieViewmodel movieViewmodel) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: Colors.redAccent, size: 60),
-          const SizedBox(height: 16),
-          Text(
-            movieViewmodel.error,
-            style: const TextStyle(color: Colors.redAccent, fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () => movieViewmodel.fetchPopularMovies(),
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF50C4ED),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
-        ],
+  Widget buildHorizontalMovieList(List movies) {
+    return SizedBox(
+      height: 220,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: movies.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, index) {
+          final movie = movies[index];
+          return MovieCardWidget(image: movie.posterPath, movie: movie);
+        },
       ),
     );
   }

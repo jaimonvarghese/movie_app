@@ -5,10 +5,54 @@ import 'package:movie_app/features/Auth/view/widgets/auth_text_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/divider_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/sign_in_button_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/social_media_buttons.dart';
+import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
 import 'package:movie_app/features/home/view/screens/home_screen.dart';
+import 'package:provider/provider.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signUp() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      throw Exception('Please enter email and password');
+    }
+
+    setState(() => isLoading = true);
+
+    try {
+      await Provider.of<AuthViewModel>(
+        context,
+        listen: false,
+      ).registerWithEmail(email, password);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } catch (e) {
+      throw Exception('Error: ${e.toString()}');
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +63,10 @@ class SignUpScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(
+              Navigator.pushReplacement(
                 context,
-              ).push(MaterialPageRoute(builder: (ctx) => HomeScreen()));
+                MaterialPageRoute(builder: (_) => const HomeScreen()),
+              );
             },
             child: Text(
               'Skip',
@@ -31,63 +76,49 @@ class SignUpScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AuthTextWidget(title: 'Sign Up'),
-              SizedBox(height: 20),
-              TextField(
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'E-mail',
-                  hintStyle: GoogleFonts.poppins(color: Colors.white54),
-                  filled: true,
-                  fillColor: Color(0xFF2C2C2C),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              // Password field
-              TextField(
-                obscureText: true,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  hintStyle: GoogleFonts.poppins(color: Colors.white54),
-                  filled: true,
-                  fillColor: Color(0xFF2C2C2C),
-                  suffixIcon: Icon(Icons.visibility_off, color: Colors.white54),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
+              const SizedBox(height: 100),
+              const AuthTextWidget(title: 'Sign Up'),
+              const SizedBox(height: 30),
 
-              // Sign In button
-              AuthButtonWidget(title: 'Sign Up'),
-              SizedBox(height: 10),
+              // Email Field
+              _buildTextField(controller: _emailController, hint: 'E-mail'),
+              const SizedBox(height: 16),
+
+              // Password Field
+              _buildTextField(
+                controller: _passwordController,
+                hint: 'Password',
+                obscureText: true,
+                suffixIcon: const Icon(
+                  Icons.visibility_off,
+                  color: Colors.white54,
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Sign Up Button
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : AuthButtonWidget(title: 'Sign Up', onPressed: _signUp),
+
+              const SizedBox(height: 12),
+
               Text(
                 'By clicking the “sign up” button, you accept the terms of the Privacy Policy',
                 style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12),
               ),
+              const SizedBox(height: 20),
 
-              SizedBox(height: 20),
+              const DividerWidget(),
+              const SizedBox(height: 20),
 
-              // Divider with OR
-              DividerWidget(),
-
-              SizedBox(height: 20),
-
-              // Social Login buttons
-              SocialMediaButtons(),
+              const SocialMediaButtons(),
             ],
           ),
         ),
@@ -98,6 +129,30 @@ class SignUpScreen extends StatelessWidget {
           text: "Already have an account? ",
           text1: 'Sign In',
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.poppins(color: Colors.white54),
+        filled: true,
+        fillColor: const Color(0xFF2C2C2C),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        suffixIcon: suffixIcon,
       ),
     );
   }

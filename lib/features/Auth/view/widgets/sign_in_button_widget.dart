@@ -20,7 +20,7 @@ class SignInButtonWidget extends StatelessWidget {
           onTap: () {
             Navigator.of(
               context,
-            ).push(MaterialPageRoute(builder: (ctx) => SiginScreen()));
+            ).push(MaterialPageRoute(builder: (ctx) => SignInScreen()));
           },
           child: Text(
             text1,
