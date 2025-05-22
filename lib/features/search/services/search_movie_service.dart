@@ -29,10 +29,7 @@ class SearchMovieService {
     try {
       final response = await _dio.get(
         '/search/movie',
-        queryParameters: {
-          'api_key':ApiConstants.apiKey ,
-          'query': query,
-        },
+        queryParameters: {'query': query, 'api_key': ApiConstants.apiKey},
       );
       log(response.toString());
       final List<dynamic> results = response.data['results'];

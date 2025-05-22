@@ -59,7 +59,10 @@ class _SearchScreenState extends State<SearchScreen> {
               padding: const EdgeInsets.all(16.0),
               child: ErrorBoxContainer(
                 error: searchViewmodel.error,
-                onPressed: () => searchViewmodel.fetchSearchMovies(),
+                onPressed: () {
+                  searchViewmodel.fetchSearchMovies();
+                  searchViewmodel.fetchSearchResultMovies('');
+                },
               ),
             );
           }
@@ -81,9 +84,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   _buildSearchBar(searchViewmodel),
                   const SizedBox(height: 20),
                   Expanded(
-                    child: _isSearching
-                        ? SearchResult(searchMovies: searchViewmodel)
-                        : SearchIdle(searchMovies: searchViewmodel),
+                    child:
+                        _isSearching
+                            ? SearchResult(searchMovies: searchViewmodel)
+                            : SearchIdle(searchMovies: searchViewmodel),
                   ),
                 ],
               ),
@@ -114,7 +118,10 @@ class _SearchScreenState extends State<SearchScreen> {
             borderRadius: BorderRadius.circular(30),
             backgroundColor: const Color(0xFF1E1E1E),
             prefixIcon: const Icon(CupertinoIcons.search, color: Colors.grey),
-            suffixIcon: const Icon(CupertinoIcons.xmark_circle, color: Colors.grey),
+            suffixIcon: const Icon(
+              CupertinoIcons.xmark_circle,
+              color: Colors.grey,
+            ),
             style: const TextStyle(color: Colors.white),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
 import 'package:movie_app/features/home/view/screens/splash_screen.dart';
 import 'package:movie_app/features/home/viewmodel/movie_viewmodel.dart';
+import 'package:movie_app/features/profile/viewmodel/user_viewmodel.dart';
 import 'package:movie_app/features/search/viewmodel/search_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MovieViewmodel()),
         ChangeNotifierProvider(create: (_) => SearchViewmodel()),
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => UserViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

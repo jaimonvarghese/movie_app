@@ -20,6 +20,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool isLoading = false;
+  bool _obscureText = true;
 
   @override
   void dispose() {
@@ -94,10 +95,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
               _buildTextField(
                 controller: _passwordController,
                 hint: 'Password',
-                obscureText: true,
-                suffixIcon: const Icon(
-                  Icons.visibility_off,
-                  color: Colors.white54,
+                obscureText: _obscureText,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.white54,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
                 ),
               ),
               const SizedBox(height: 24),
