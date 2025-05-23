@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/common/widgets/error_box_container.dart';
 import 'package:movie_app/common/widgets/movie_card_widget.dart';
+import 'package:movie_app/features/home/models/movie_model.dart';
 import 'package:movie_app/features/home/view/widgets/movie_main_card.dart';
 import 'package:movie_app/features/home/view/widgets/movie_title_card_widget.dart';
 import 'package:movie_app/features/home/view/widgets/quick_action_section_widget.dart';
@@ -95,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildHorizontalMovieList(List movies) {
+  Widget buildHorizontalMovieList(List<MovieModel> movies) {
     return SizedBox(
       height: 220,
       child: ListView.separated(

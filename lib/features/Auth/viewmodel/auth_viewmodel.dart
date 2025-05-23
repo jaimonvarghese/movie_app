@@ -63,19 +63,6 @@ class AuthViewModel extends ChangeNotifier {
     }
   }
 
-  /// signin a user using google
-  Future<void> signInWithGoogle() async {
-    _setLoading(true);
-    _setError(null);
-
-    try {
-      await _authService.signInWithGoogle();
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
-  }
 
   /// signin a user using email and password
   Future<void> signOut() async {

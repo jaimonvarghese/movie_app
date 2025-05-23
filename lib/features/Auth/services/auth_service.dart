@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   /// Registers a new user using email and password.
   Future<UserCredential> registerWithEmail(String email, String password) async {
@@ -35,29 +33,7 @@ class AuthService {
     }
   }
 
-   /// Signs in using Google Sign-In.
-  Future<UserCredential> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw Exception('Google sign-in aborted by user');
-      }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _auth.signInWithCredential(credential);
-      return userCredential;
-    } on FirebaseAuthException catch (e) {
-      throw Exception('FirebaseAuthException: ${e.code} - ${e.message}');
-    } catch (e) {
-      throw Exception('Google Sign-In failed: $e');
-    }
-  }
 
    /// Sends a password reset email to the given email address.
   Future<void> sendPasswordResetEmail(String email) async {

@@ -15,9 +15,9 @@ class MovieMainCard extends StatelessWidget {
       height: 360,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: movieViewmodel.popularMovies.length,
+        itemCount: movieViewmodel.topRatedMovies.length,
         itemBuilder: (context, index) {
-          final movie = movieViewmodel.popularMovies[index];
+          final movie = movieViewmodel.topRatedMovies[index];
           final String imageUrl =
               '${ApiConstants.imageBaseUrl}${movie.backdropPath}';
 

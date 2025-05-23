@@ -22,32 +22,56 @@ class MovieViewmodel extends ChangeNotifier {
 
   bool _isInitialized = false;
 
-
-  void _setLoading(bool loading) {
-    _isLoading = loading;
+  void _setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  void _setError(String error) {
-    _error = error;
+  void _setError(String value) {
+    _error = value;
+    notifyListeners();
+  }
+
+  void _setMovies({
+    required List<MovieModel> popular,
+    required List<MovieModel> upcoming,
+    required List<MovieModel> topRated,
+  }) {
+    _popularMovies = popular;
+    _upcomingMovies = upcoming;
+    _topRatedMovies = topRated;
+    _isInitialized = true;
     notifyListeners();
   }
 
   Future<void> fetchMovies() async {
-     if (_isInitialized) return;
+    if (_isInitialized) return;
+
     _setLoading(true);
-    _error = "";
+    _setError('');
 
     try {
-      _popularMovies = await _service.getPopularMovies();
-      _upcomingMovies = await _service.getUpComingMovies();
-      _topRatedMovies = await _service.getTopRatedMovies();
-      _isInitialized = true;
-      notifyListeners();
+      final results = await Future.wait([
+        _service.getPopularMovies(),
+        _service.getUpComingMovies(),
+        _service.getTopRatedMovies(),
+      ]);
+
+      _setMovies(
+        popular: results[0],
+        upcoming: results[1],
+        topRated: results[2],
+      );
     } catch (e) {
       _setError(e.toString());
     } finally {
       _setLoading(false);
     }
+  }
+
+  /// Call this to refresh movies manually
+  Future<void> refreshMovies() async {
+    _isInitialized = false;
+    await fetchMovies();
   }
 }

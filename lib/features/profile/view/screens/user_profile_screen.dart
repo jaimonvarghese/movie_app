@@ -55,7 +55,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        icon: Icon(Icons.arrow_back_ios,color: Colors.white,),
+                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
                       ),
 
                       Text(
@@ -82,7 +82,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  userViewmodel.user?.email ?? 'Unknown',
+                  userViewmodel.user?.email ?? 'No Name',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,

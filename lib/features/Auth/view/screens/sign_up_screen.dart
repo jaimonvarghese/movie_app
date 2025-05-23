@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_app/features/Auth/view/widgets/auth_button_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/auth_text_widget.dart';
-import 'package:movie_app/features/Auth/view/widgets/divider_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/sign_in_button_widget.dart';
-import 'package:movie_app/features/Auth/view/widgets/social_media_buttons.dart';
 import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
 import 'package:movie_app/features/home/view/screens/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -83,7 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 150),
               const AuthTextWidget(title: 'Sign Up'),
               const SizedBox(height: 30),
 
@@ -116,17 +114,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   : AuthButtonWidget(title: 'Sign Up', onPressed: _signUp),
 
               const SizedBox(height: 12),
-
-              Text(
-                'By clicking the “sign up” button, you accept the terms of the Privacy Policy',
-                style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12),
-              ),
-              const SizedBox(height: 20),
-
-              const DividerWidget(),
-              const SizedBox(height: 20),
-
-              const SocialMediaButtons(),
             ],
           ),
         ),
@@ -150,6 +137,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         hintText: hint,

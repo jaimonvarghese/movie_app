@@ -5,6 +5,7 @@ import 'package:movie_app/features/search/services/search_movie_service.dart';
 class SearchViewmodel extends ChangeNotifier {
   final SearchMovieService _service = SearchMovieService();
 
+  // --- State variables ---
   List<MovieModel> _searchIdleList = [];
   List<MovieModel> get searchIdleList => _searchIdleList;
 
@@ -19,26 +20,45 @@ class SearchViewmodel extends ChangeNotifier {
 
   bool _isInitialized = false;
 
-
-  void _setLoading(bool loading) {
-    _isLoading = loading;
+  // --- Private Setters ---
+  void _setLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
-  void _setError(String error) {
-    _error = error;
+  void _setError(String message) {
+    _error = message;
     notifyListeners();
   }
 
+  void _clearError() {
+    if (_error.isNotEmpty) {
+      _error = '';
+      notifyListeners();
+    }
+  }
+
+  void _setIdleMovies(List<MovieModel> movies) {
+    _searchIdleList = movies;
+    notifyListeners();
+  }
+
+  void _setSearchResults(List<MovieModel> results) {
+    _searchResults = results;
+    notifyListeners();
+  }
+
+  // --- Fetch Idle List ---
   Future<void> fetchSearchMovies() async {
     if (_isInitialized) return;
+
     _setLoading(true);
-    _error = "";
+    _clearError();
 
     try {
-      _searchIdleList = await _service.getSearchIdleMovies();
+      final movies = await _service.getSearchIdleMovies();
+      _setIdleMovies(movies);
       _isInitialized = true;
-      notifyListeners();
     } catch (e) {
       _setError(e.toString());
     } finally {
@@ -46,19 +66,24 @@ class SearchViewmodel extends ChangeNotifier {
     }
   }
 
+  // --- Fetch Results for Search Query ---
   Future<void> fetchSearchResultMovies(String query) async {
-  _setLoading(true);
-  _error = "";
+    _setLoading(true);
+    _clearError();
 
-  try {
-    _searchResults = await _service.getSearchResultMovies(query);
-    notifyListeners();
-  } catch (e) {
-    _setError(e.toString());
-  } finally {
-    _setLoading(false);
+    try {
+      final results = await _service.getSearchResultMovies(query);
+      _setSearchResults(results);
+    } catch (e) {
+      _setError(e.toString());
+    } finally {
+      _setLoading(false);
+    }
   }
-}
 
-
+  // --- Clear search results ---
+  void clearSearchResults() {
+    _searchResults.clear();
+    notifyListeners();
+  }
 }

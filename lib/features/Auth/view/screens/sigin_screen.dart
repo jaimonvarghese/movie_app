@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movie_app/features/Auth/view/widgets/auth_button_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/auth_text_widget.dart';
-import 'package:movie_app/features/Auth/view/widgets/divider_widget.dart';
 import 'package:movie_app/features/Auth/view/widgets/sign_up_button_widget.dart';
-import 'package:movie_app/features/Auth/view/widgets/social_media_buttons.dart';
 import 'package:movie_app/features/Auth/viewmodel/auth_viewmodel.dart';
 import 'package:movie_app/features/home/view/screens/home_screen.dart';
 import 'package:provider/provider.dart';
@@ -112,7 +110,7 @@ class _SignInScreenState extends State<SignInScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 100),
+              const SizedBox(height: 150),
               const AuthTextWidget(title: 'Sign In'),
               const SizedBox(height: 30),
 
@@ -157,9 +155,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   : AuthButtonWidget(title: 'Sign In', onPressed: _signIn),
 
               const SizedBox(height: 20),
-              const DividerWidget(),
-              const SizedBox(height: 20),
-              const SocialMediaButtons(),
             ],
           ),
         ),
